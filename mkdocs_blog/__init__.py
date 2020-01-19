@@ -84,16 +84,16 @@ class Blog(BasePlugin):
             # Why? Because each of our blog articles will be saved in this
             # format:
             #
-            # mkdocs/docs/blog/2020/01/2020_01_20__first_post.md
-            # mkdocs/docs/blog/2020/01/2020_01_25__second_post.md
-            # mkdocs/docs/blog/2020/02/2020_02_01__third_post.md
+            # mkdocs/docs/blog/2020/01/2020-01-20--first_post.md
+            # mkdocs/docs/blog/2020/01/2020-01-25--second_post.md
+            # mkdocs/docs/blog/2020/02/2020-02-01--third_post.md
             #
             # By reversing the alphabetical order, We'll ensure to get this
             # articles list in this order:
             #
-            # "third post"  (2020_02_01__third_post.md)
-            # "second post" (2020_01_25__second_post.md)
-            # "first post"  (2020_01_20__first_post.md)
+            # "third post"  (2020-02-01--third_post.md)
+            # "second post" (2020-01-25--second_post.md)
+            # "first post"  (2020-01-20--first_post.md)
             #
             for page in sorted(nav.pages,
                                key=lambda x: x.url, reverse=True):
