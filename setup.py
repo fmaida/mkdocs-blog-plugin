@@ -11,7 +11,7 @@ setup(
     license="LICENSE.txt",
     description="Keeps a really simple blog section inside your MkDocs site.",
     install_requires=[
-        "mkdocs",
+        "dateparser",
     ],
 
     entry_points={
