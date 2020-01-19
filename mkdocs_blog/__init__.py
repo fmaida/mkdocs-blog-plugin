@@ -1,4 +1,4 @@
-__version__ = '0.1.0'
+__version__ = '0.1.2'
 
 from mkdocs import config, utils
 from mkdocs.plugins import BasePlugin
@@ -44,12 +44,6 @@ class Blog(BasePlugin):
 
     def on_nav(self, nav, config, files):
 
-        # THE FOLLOWING 3 LINES OF CODE ARE JUST MEANT FOR DEBUGGING PURPOSES
-        # ===================================================================
-        # import pydevd_pycharm
-        # pydevd_pycharm.settrace('localhost', port=5000, stdoutToServer=True,
-        # stderrToServer=True)
-
         # Our plugin code starts here!
 
         # We are starting by reading the configuration parameters for our
@@ -66,7 +60,7 @@ class Blog(BasePlugin):
 
         # Searches for a section that is titled the blog section
         blog = [e for e in nav.items if e.title
-                and e.title.lower() == blog_section]
+                and e.title.lower() == blog_section.lower()]
         # Have we founded that?
         if blog:
             # Yes, we did. We'll just need the first section found
@@ -141,6 +135,23 @@ class Blog(BasePlugin):
                     # Then let's add the previous article section to our
                     # blog section
                     blog.children.append(previous_articles)
+
+        # THE FOLLOWING 3 LINES OF CODE ARE JUST MEANT FOR DEBUGGING PURPOSES
+        # ===================================================================
+        # import pydevd_pycharm
+        # pydevd_pycharm.settrace('localhost', port=5000, stdoutToServer=True,
+        # stderrToServer=True)
+
+        # Search for the blog section in the nav, and move it to the bottom
+        # (this code sucks, I shall refactor it at a later time)
+        found = False
+        for i, item in enumerate(nav.items):
+            if item.title and item.title.lower() == blog_section.lower():
+                found = True
+                break
+        if found:
+            del(nav.items[i])
+            nav.items.append(blog)
 
         # Finished. We can give back our modified nav to mkdocs and enjoy
         # our new blog section!
