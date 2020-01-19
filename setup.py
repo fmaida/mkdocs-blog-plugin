@@ -9,7 +9,7 @@ setup(
     packages=["mkdocs_blog"],
     url='https://github.com/fmaida/mkdocs-blog-plugin',
     license="LICENSE.txt",
-    description="Keeps a really simple blog in your mkdocs",
+    description="Keeps a really simple blog section inside your MkDocs site.",
     install_requires=[
         "mkdocs",
     ],
