@@ -54,13 +54,18 @@ docs
 │   ├── 2019
 │   └── 2020
 │       ├── 01
-│       │   ├── 2020-01-20--first-article.md
-│       │   └── 2020-01-26--second-article.md
+│       │   ├── 20
+│       │   │   └── first-article.md
+│       │   └── 26
+│       │       └── second-article.md
 │       ├── 02
-│       │   ├── 2020-02-01--third-article.md
-│       │   └── 2020-02-09--fourth-article.md
+│       │   ├── 01
+│       │   │   └── third_article.md
+│       │   └── 09
+│       │       └── fourth-article.md
 │       └── 03
-│           └── 2020-03-16--fifth-article.md
+│           └── 16
+│               └── fifth-article.md
 └── index.md
 ```
 
