@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
     name="mkdocs-blog-plugin",
-    version="0.1.1",
+    version="0.1.3",
     author="Francesco Maida",
     author_email="francesco.maida@gmail.com",
     packages=["mkdocs_blog"],
