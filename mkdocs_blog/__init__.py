@@ -1,4 +1,4 @@
-__version__ = '0.1.3'
+__version__ = '0.2.0'
 
 from mkdocs import config, utils
 from mkdocs.plugins import BasePlugin
@@ -15,48 +15,99 @@ class Blog(BasePlugin):
 
         # This is the section / folder in which we'll try to build our blog
         # (Default: "blog")
-        ('section', config.config_options.Type(
-            utils.string_types, default='blog')),
+        ("folder", config.config_options.Type(
+            utils.string_types, default="blog")),
 
         # How many articles do we have to display on our blog at once?
-        # (this number will be then doubled by the "previous articles" section)
-        # (Default: 10 articles, plus another 10 in our previous articles
-        # section)
-        ('articles', config.config_options.Type(
+        # (this number will be then augmented by the "more articles" section)
+        # (Default: 6 articles)
+        ("articles", config.config_options.Type(
             int, default=6)),
 
-        # Let's allow our user to slightly customize the "previous articles"
+        # Let's allow our user to slightly customize the "more articles"
         # section. How do we have to name this section if it will contains
         # multiple articles? Remember to put a % character
-        ('more_articles', config.config_options.Type(
-            utils.string_types, default='More articles (%)')),
+        ("more-articles", config.config_options.Type(
+            utils.string_types, default="More articles (%)")),
 
         # Which name do we have to give to each subsection inside our
         # "previous articles" section?
-        ('pagination', config.config_options.Type(
-            utils.string_types, default='Page % of %')),
+        ("pagination", config.config_options.Type(
+            utils.string_types, default="Page % of %")),
 
-        # Can we display the previous articles section, or is it better if we
+        # Can we display the "more articles" section, or is it better if we
         # hide it? (Default: Show it)
-        ('hide_previous_articles', config.config_options.Type(
-            bool, default=False)),
+        ("display-more-articles", config.config_options.Type(
+            bool, default=True)),
+
+        # Can we display the article date in the navbar, or is it better if we
+        # hide it? (Default: Show it)
+        ("display-article-date", config.config_options.Type(
+            bool, default=True)),
+
+        # How we have to display an article date on the navbar?
+        ("format", config.config_options.Type(
+            utils.string_types, default="[%d/%m]")),
+
+        # Do we have to display an article date on the left or on the right?
+        ("text-align", config.config_options.Type(
+            utils.string_types, default="left")),
     )
 
+    def extract_date(self, url):
+        """
+        Extracts a date from a URL in a format like this:
+        "/<tag>/<year>/<month>/<day>/<article name>/"
+
+        Args:
+            url: The URL that has to be check
+
+        Returns:
+            a datetime.date object if a date is found,
+            otherwise returns None
+        """
+        article_date = None
+        blog_tag = self.config["folder"].lower()
+        start = url.lower().find(blog_tag)
+        if start >= 0:
+            try:
+                start += len(blog_tag) + 1
+                temp = url[start:start+10].split("/")
+                article_date = datetime.date(year=int(temp[0]),
+                                             month=int(temp[1]),
+                                             day=int(temp[2]))
+            except ValueError:
+                pass
+        return article_date
+
     def on_nav(self, nav, config, files):
+        """
+        From MkDocs documentation:
+        ==========================
+        The nav event is called after the site navigation is created and can
+        be used to alter the site navigation.
+
+        Args:
+            nav: Our navbar
+            config: Global configuration
+            files: List of files
+
+        Returns:
+            A modified navbar
+        """
 
         # Our plugin code starts here!
-
-        # We are starting by reading the configuration parameters for our
-        # plugin
-        blog_config = config.data["plugins"]["blog"].config.data
+        # We are starting by reading the configuration parameters
+        # for our plugin
 
         # How many articles do we have to display in the blog part.
         # This number will be doubled by the nested "previous articles"
         # section
-        articles = blog_config["articles"]
+        articles = self.config["articles"]
+
         # The title of the section that will contain the blog part
         # By default, it searches for a section titled "blog"
-        blog_section = blog_config["section"]
+        blog_section = self.config["folder"]
 
         # Searches for a section that is titled the blog section
         blogs_found = [(i, e) for i, e in enumerate(nav.items)
@@ -120,6 +171,7 @@ class Blog(BasePlugin):
                         more.children.append(subsection)
                     else:
                         # Or the default subsection is already full ?
+                        # noinspection PyUnboundLocalVariable
                         if len(subsection.children) >= articles:
                             # Yes. Add a new subsection inside of it
                             subsection = Section(title="", children=[])
@@ -127,11 +179,11 @@ class Blog(BasePlugin):
 
                     subsection.children.append(page)
 
-        # All right, we just finished scanning our mkdocs repository for
+        # All right, we just finished scanning our MkDocs repository for
         # articles. Let's add some minor finishing touches to our sections.
 
-        # Did the user explicitly request to hide this section?
-        if not blog_config["hide_previous_articles"]:
+        # Did the user allows to show this section?
+        if self.config["display-more-articles"]:
 
             # How many articles do we have stored in the "More articles"
             # section?
@@ -145,14 +197,14 @@ class Blog(BasePlugin):
                 last_page = len(more.children)
                 for actual_page, subpage in enumerate(more.children,
                                                       start=1):
-                    subpage.title = blog_config["pagination"]\
+                    subpage.title = self.config["pagination"]\
                         .replace("%", str(actual_page), 1)\
                         .replace("%", str(last_page), 1)
 
                 # Last thing before adding this section to our blog...
                 # We need to change our "More article" section title
                 # accordingly to what our user has chosen
-                more.title = blog_config["more_articles"]\
+                more.title = self.config["more-articles"]\
                     .replace("%", str(articles_count))
 
                 # Finished. Let's add our "More articles" section to our
@@ -173,6 +225,45 @@ class Blog(BasePlugin):
         # Now we'll append the blog section at the end of the nav element
         nav.items.append(blog)
 
-        # All finished. We can give back our modified nav to mkdocs and enjoy
+        # All finished. We can give back our modified nav to MkDocs and enjoy
         # our new blog section!
         return nav
+
+    def on_page_markdown(self, markdown, page, config, nav=None, **kwargs):
+        """
+        Now we are checking a single page.
+
+        Args:
+            markdown:
+            page:
+            config:
+            nav:
+            **kwargs:
+
+        Returns:
+            Our page content, eventually modified.
+        """
+
+        # Is our page a blog article?
+        # I can recognize that because our page URL will have inside our
+        # folder. For example: "/blog/2020/12/31/happy-new-years-eve.md"
+        if self.config["folder"].lower() in page.url.lower():
+
+            # Let's try to extract a date from that URL
+            article_date = self.extract_date(page.url)
+
+            # Have we found a usable date in that URL?
+            if article_date and self.config["display-article-date"]:
+                # Yes. Then let's change our page title accordingly.
+                temp = self.config["format"]
+                temp = temp.replace("%d", str(article_date.day).zfill(2))
+                temp = temp.replace("%m", str(article_date.month).zfill(2))
+                temp = temp.replace("%y", str(article_date.year).zfill(4)[:2])
+                temp = temp.replace("%Y", str(article_date.year).zfill(4))
+                if self.config["text-align"].lower() == "right":
+                    page.title = "{} {}".format(page.title, temp)
+                else:
+                    page.title = "{} {}".format(temp, page.title)
+
+        return markdown
+

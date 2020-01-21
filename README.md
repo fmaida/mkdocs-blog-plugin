@@ -4,6 +4,8 @@ This plugin allows you to host a tiny blog
 section in your MkDocs site.  
 Move away, WordPress... well, not really.
 
+![Screenshot](screenshot.png)
+
 ### How does it work ?
 
 It's quite simple. 90% of the work is already done by 
@@ -47,19 +49,17 @@ Inside `docs/blog` create a folder for each
 year you are planning to add new articles. 
 Then, inside each year folder create twelve 
 folders, numbered from `01` to `12` for each 
-month.  
+month. Finally, in each month folder for each day 
+create a corresponding folder but remember to add 
+a leading zero (for example: `08`, `09`, `10`, ...)  
 Now, for every article you will go inside 
-the corresponding year/month folder and you 
+the corresponding `year/month/day folder and you 
 will create a new file there.
 While it is not necessary that you keep this 
-strict naming convention, you should name 
-your folder and your files in a way it could 
-be easily ordered. My suggestion is to 
-call each new file like this:
+strict naming convention, this will help the plugin 
+to understand when your article was made.  
 
-`YYYY-MM-DD--your-article-title.md`
-
-For example:
+For example, this is how I manage my blog folder:
 
 ```sh
 docs
@@ -82,4 +82,86 @@ docs
 └── index.md
 ```
 
-TODO
+### Customizing the plugins
+
+You can customize this plugin by adding some parameters 
+in the `mkdocs.yml` file, like this:
+
+```yaml
+- plugin:
+    - blog:
+        format: "(%m/%d/%y)"
+        text-align: "right"
+```
+
+Here is a brief list of every parameters supported 
+by the current version of the plugin:
+
+#### folder  
+This is the section / folder in which we'll try to 
+build our blog
+> Default value: "blog"
+
+#### articles
+
+How many articles do we have to display on our blog 
+at once? More articles will be displayed in the 
+corresponding subsection
+
+> Default value: 6 articles
+
+#### more-articles
+
+Let's allow our user to slightly customize the 
+"previous articles" section. How do we have to name 
+this section if it will contains more articles? 
+Remember to put a percentage character wherever you 
+want this plugin to insert the number of available 
+articles.
+
+> Default value: "More articles (%)"
+
+#### pagination
+
+Which name do we have to give to each subsection 
+inside our "more articles" section?  
+Remember to put two percentage characters wherever you 
+want this plugin to insert the actual number page and 
+the total amount of pages made. 
+        
+> Default value: Page % of %"
+
+#### display-more-articles
+
+Can we display the previous articles section, or is it 
+better if we hide it? 
+
+> Default: True
+
+#### display-article-date
+
+Can we display the article date in the navbar, or is it 
+better if we hide it?
+
+> Default: True
+
+#### format
+
+How we have to display an article publication date on 
+our navbar?  
+You can use these placeholders inside your string:
+
+- `%d` = Day  
+- `%m` = Month  
+- `%y` = Year (2-digits)  
+- `%Y` = Year (4-digits)  
+        
+> Default value: "[%d/%m]"
+
+#### text-align
+
+Do we have to display an article publication date on 
+the left side (`"left"`) or on the right side 
+(`"right"`)?
+
+> Default value: "left"
