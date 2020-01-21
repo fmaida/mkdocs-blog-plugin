@@ -9,7 +9,7 @@ Move away, WordPress... well, not really.
 ### How does it work ?
 
 It's quite simple. 90% of the work is already done by 
-MkDocs itself.  
+MkDocs itself.
 Each time you will build your MkDocs site or serve it, 
 this plugin will try to find a specific directory 
 in your documentation folder.  
@@ -64,21 +64,21 @@ For example, this is how I manage my blog folder:
 ```sh
 docs
 ├── blog
-│   ├── 2019
-│   └── 2020
-│       ├── 01
-│       │   ├── 20
-│       │   │   └── first-article.md
-│       │   └── 26
-│       │       └── second-article.md
-│       ├── 02
-│       │   ├── 01
-│       │   │   └── third_article.md
-│       │   └── 09
-│       │       └── fourth-article.md
-│       └── 03
-│           └── 16
-│               └── fifth-article.md
+│   ├── 2019
+│   └── 2020
+│       ├── 01
+│       │   ├── 20
+│       │   │   └── first-article.md
+│       │   └── 26
+│       │       └── second-article.md
+│       ├── 02
+│       │   ├── 01
+│       │   │   └── third_article.md
+│       │   └── 09
+│       │       └── fourth-article.md
+│       └── 03
+│           └── 16
+│               └── fifth-article.md
 └── index.md
 ```
 
@@ -89,17 +89,19 @@ in the `mkdocs.yml` file, like this:
 
 ```yaml
 - plugin:
-    - blog:
-        format: "(%m/%d/%y)"
-        text-align: "right"
+      - blog:
+          format: "(%m/%d/%y)"
+          text-align: "right"
 ```
 
 Here is a brief list of every parameters supported 
 by the current version of the plugin:
 
-#### folder  
+#### folder 
+
 This is the section / folder in which we'll try to 
 build our blog
+
 > Default value: "blog"
 
 #### articles
@@ -128,7 +130,7 @@ inside our "more articles" section?
 Remember to put two percentage characters wherever you 
 want this plugin to insert the actual number page and 
 the total amount of pages made. 
-        
+
 > Default value: Page % of %"
 
 #### display-more-articles
@@ -155,7 +157,7 @@ You can use these placeholders inside your string:
 - `%m` = Month  
 - `%y` = Year (2-digits)  
 - `%Y` = Year (4-digits)  
-        
+
 > Default value: "[%d/%m]"
 
 #### text-align
