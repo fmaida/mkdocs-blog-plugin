@@ -1,4 +1,4 @@
-__version__ = '0.2'
+__version__ = '0.21'
 
 from mkdocs import config, utils
 from mkdocs.plugins import BasePlugin

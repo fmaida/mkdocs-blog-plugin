@@ -5,7 +5,7 @@
   section in your MkDocs site.
 | Move away, WordPress... well, not really.
 
-.. image:: screenshot.png
+.. image:: https://raw.githubusercontent.com/fmaida/mkdocs-blog-plugin/master/screenshot.png
 
 How does it work ?
 ~~~~~~~~~~~~~~~~~~
