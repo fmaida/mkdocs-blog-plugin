@@ -108,6 +108,7 @@ folder
 | This is the section / folder in which we'll try to
   build our blog
 
+
     Default value: "blog"
 
 articles
@@ -116,6 +117,7 @@ articles
 | How many articles do we have to display on our blog
   at once? More articles will be displayed in the
   corresponding subsection
+
 
     Default value: 6 articles
 
@@ -140,6 +142,7 @@ pagination
   want this plugin to insert the actual number page and
   the total amount of pages made.
 
+
     Default value: Page % of %"
 
 display-more-articles
@@ -148,6 +151,7 @@ display-more-articles
 | Can we display the previous articles section, or is it
   better if we hide it?
 
+
     Default: True
 
 display-article-date
@@ -155,6 +159,7 @@ display-article-date
 
 | Can we display the article date in the navbar, or is it
   better if we hide it?
+
 
     Default: True
 
