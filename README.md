@@ -1,8 +1,21 @@
-# Blogs for MkDocs (MkDocs-Blog-Plugin)
+# &laquo; Blogs for MkDocs &raquo; (MkDocs-Blog-Plugin)
 
-From time to time you might want to have a 
-small blog section inside your MkDocs 
-documentation site. 
+This plugin allows you to host a tiny blog 
+section in your MkDocs site.  
+Move away, WordPress... well, not really.
+
+### How does it work ?
+
+It's quite simple. 90% of the work is already done by 
+MkDocs itself.  
+Each time you will build your MkDocs site or serve it, 
+this plugin will try to find a specific directory 
+in your documentation folder.  
+If it finds it, every document and every subdirectory 
+nested in it will be listed in reverse on the navbar.  
+Plus, if you will have too many documents to be listed 
+at once, the plugin will try to organize your remaining 
+documents in subfolders. 
 
 ### How can I install it ?
 

@@ -59,78 +59,86 @@ class Blog(BasePlugin):
         blog_section = blog_config["section"]
 
         # Searches for a section that is titled the blog section
-        blog = [e for e in nav.items if e.title
-                and e.title.lower() == blog_section.lower()]
+        blogs_found = [(i, e) for i, e in enumerate(nav.items)
+                       if e.title and e.title.lower() == blog_section.lower()]
         # Have we founded that?
-        if blog:
-            # Yes, we did. We'll just need the first section found
-            blog = blog[0]
-            # Now it's time to empty whatever that section was containing
-            blog.children = []
-            # If the number of articles that we are going to display will be
-            # too high, we'll also need a section in which we could place the
-            # exceeding articles
-            more = Section(title="", children=[])
+        if not blogs_found:
+            # Nope. We'll give back control to MkDocs...
+            return nav
 
-            # All right, it's time to start searching our mkdocs repository for
-            # potentials blog articles. We want to sort our list of pages by
-            # their URL value, in descending order.
-            # Why? Because each of our blog articles will be saved in this
-            # format:
-            #
-            # mkdocs/docs/blog/2020/01/2020-01-20--first_post.md
-            # mkdocs/docs/blog/2020/01/2020-01-25--second_post.md
-            # mkdocs/docs/blog/2020/02/2020-02-01--third_post.md
-            #
-            # By reversing the alphabetical order, We'll ensure to get this
-            # articles list in this order:
-            #
-            # "third post"  (2020-02-01--third_post.md)
-            # "second post" (2020-01-25--second_post.md)
-            # "first post"  (2020-01-20--first_post.md)
-            #
-            for page in sorted(nav.pages,
-                               key=lambda x: x.url, reverse=True):
-                # Let's have a look at the URL of this page... hmm...
-                # Is it nested in the folder/section we have chosen for keeping
-                # our blog articles ? Let's have a case-insensitive check...
-                if blog_section + "/" in page.url.lower():
-                    # Yes, it is in the right folder / section.
-                    # Now, let's check if we already have enough articles in
-                    # our blog section
-                    if len(blog.children) < articles:
-                        # No, there's still space available.
-                        # Let's add this page to our blog section
-                        blog.children.append(page)
+        # Yes, since we are still here we did found at least one blog folder.
+        # We'll just need to pick up the first occurrence found
+        blog_position, blog = blogs_found[0]
+
+        # Now it's time to empty whatever that section was containing
+        blog.children = []
+
+        # If the number of articles that we are going to display will be
+        # too high, we'll also need a section in which we could place the
+        # exceeding articles
+        more = Section(title="", children=[])
+
+        # All right, it's time to start searching our mkdocs repository for
+        # potentials blog articles. We want to sort our list of pages by
+        # their URL value, in descending order.
+        # Why? Because each of our blog articles will be saved in this
+        # format:
+        #
+        # mkdocs/docs/blog/2020/01/2020-01-20--first_post.md
+        # mkdocs/docs/blog/2020/01/2020-01-25--second_post.md
+        # mkdocs/docs/blog/2020/02/2020-02-01--third_post.md
+        #
+        # By reversing the alphabetical order, We'll ensure to get this
+        # articles list in this order:
+        #
+        # "third post"  (2020-02-01--third_post.md)
+        # "second post" (2020-01-25--second_post.md)
+        # "first post"  (2020-01-20--first_post.md)
+        #
+        for page in sorted(nav.pages,
+                           key=lambda x: x.url, reverse=True):
+            # Let's have a look at the URL of this page... hmm...
+            # Is it nested in the folder/section we have chosen for keeping
+            # our blog articles ? Let's have a case-insensitive check...
+            if blog_section + "/" in page.url.lower():
+                # Yes, it is in the right folder / section.
+                # Now, let's check if we already have enough articles in
+                # our blog section
+                if len(blog.children) < articles:
+                    # No, there's still space available.
+                    # Let's add this page to our blog section
+                    blog.children.append(page)
+                else:
+                    # Our blog section is already at full capacity.
+                    # Well, let's see if we can add this article to the
+                    # "previous articles" section that (maybe) will be
+                    # added at the end
+
+                    # Is the "More articles" section empty ?
+                    if len(more.children) == 0:
+                        subsection = Section(title="", children=[])
+                        more.children.append(subsection)
                     else:
-                        # Our blog section is already at full capacity.
-                        # Well, let's see if we can add this article to the
-                        # "previous articles" section that (maybe) will be
-                        # added at the end
-
-                        # Is the "More articles" section empty ?
-                        if len(more.children) == 0:
+                        # Or the default subsection is already full ?
+                        if len(subsection.children) >= articles:
+                            # Yes. Add a new subsection inside of it
                             subsection = Section(title="", children=[])
                             more.children.append(subsection)
-                        else:
-                            # Or the default subsection is already full ?
-                            if len(subsection.children) >= articles:
-                                # Yes. Add a new subsection inside of it
-                                subsection = Section(title="", children=[])
-                                more.children.append(subsection)
 
-                        subsection.children.append(page)
+                    subsection.children.append(page)
 
-            # All right, we just finished scanning our mkdocs repository for
-            # articles. Let's add some minor finishing touches to our sections.
+        # All right, we just finished scanning our mkdocs repository for
+        # articles. Let's add some minor finishing touches to our sections.
 
-            # Did the user explicitly request to hide this section?
-            if not blog_config["hide_previous_articles"]:
+        # Did the user explicitly request to hide this section?
+        if not blog_config["hide_previous_articles"]:
 
-                # How many articles do we have stored in the "More articles"
-                # section?
-                articles_count = sum([len(sub.children)
-                                      for sub in more.children])
+            # How many articles do we have stored in the "More articles"
+            # section?
+            articles_count = sum([len(sub.children)
+                                  for sub in more.children])
+
+            if articles_count > 0:
 
                 # We will change the title of each subsection to display
                 # something like "Page 1 of X"
@@ -142,8 +150,8 @@ class Blog(BasePlugin):
                         .replace("%", str(last_page), 1)
 
                 # Last thing before adding this section to our blog...
-                # We need to change our "More article" section title accordingly
-                # to what our user has chosen
+                # We need to change our "More article" section title
+                # accordingly to what our user has chosen
                 more.title = blog_config["more_articles"]\
                     .replace("%", str(articles_count))
 
@@ -158,15 +166,12 @@ class Blog(BasePlugin):
         # stderrToServer=True)
 
         # Search for the blog section in the nav, and move it to the bottom
-        # (this code sucks, I shall refactor it at a later time)
-        found = False
-        for i, item in enumerate(nav.items):
-            if item.title and item.title.lower() == blog_section.lower():
-                found = True
-                break
-        if found:
-            del(nav.items[i])
-            nav.items.append(blog)
+        # Let's start by removing the blog section from wherever MkDocs has
+        # put it, in first place
+        del(nav.items[blog_position])
+
+        # Now we'll append the blog section at the end of the nav element
+        nav.items.append(blog)
 
         # All finished. We can give back our modified nav to mkdocs and enjoy
         # our new blog section!
