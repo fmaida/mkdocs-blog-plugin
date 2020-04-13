@@ -8,7 +8,7 @@ with open(path.join(this_directory, "README.rst"), encoding='utf-8') as f:
 
 setup(
     name="mkdocs-blog-plugin",
-    version="0.21",
+    version="0.25",
     author="Francesco Maida",
     author_email="francesco.maida@gmail.com",
     packages=["mkdocs_blog"],

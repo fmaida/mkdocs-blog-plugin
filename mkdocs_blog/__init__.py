@@ -1,4 +1,4 @@
-__version__ = '0.21'
+__version__ = '0.25'
 
 from mkdocs import config, utils
 from mkdocs.plugins import BasePlugin
@@ -16,7 +16,7 @@ class Blog(BasePlugin):
         # This is the section / folder in which we'll try to build our blog
         # (Default: "blog")
         ("folder", config.config_options.Type(
-            utils.string_types, default="blog")),
+            str, default="blog")),
 
         # How many articles do we have to display on our blog at once?
         # (this number will be then augmented by the "more articles" section)
@@ -28,12 +28,12 @@ class Blog(BasePlugin):
         # section. How do we have to name this section if it will contains
         # multiple articles? Remember to put a % character
         ("more-articles", config.config_options.Type(
-            utils.string_types, default="More articles (%)")),
+            str, default="More articles (%)")),
 
         # Which name do we have to give to each subsection inside our
         # "previous articles" section?
         ("pagination", config.config_options.Type(
-            utils.string_types, default="Page % of %")),
+            str, default="Page % of %")),
 
         # Can we display the "more articles" section, or is it better if we
         # hide it? (Default: Show it)
@@ -47,11 +47,11 @@ class Blog(BasePlugin):
 
         # How we have to display an article date on the navbar?
         ("format", config.config_options.Type(
-            utils.string_types, default="[%d/%m]")),
+            str, default="[%d/%m]")),
 
         # Do we have to display an article date on the left or on the right?
         ("text-align", config.config_options.Type(
-            utils.string_types, default="left")),
+            str, default="left")),
     )
 
     def extract_date(self, url):
